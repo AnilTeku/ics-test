@@ -39,9 +39,9 @@ jobs:
         run: terraform validate
 
       # Step 6: Terraform Plan
-      - name: Terraform Plan
+      - name: Terraform Plal
         run: terraform plan -out=tfplan
 
-      # Optional Step 7: Terraform Apply
-       - name: Terraform Apply
-         run: terraform apply -auto-approve tfplan
+      # Step 7: Terraform Apply
+      - name: Terraform Apply 
+        run: terraform apply -auto-approve tfplan
