@@ -39,48 +39,12 @@ resource "azurerm_subnet" "example_subnet" {
 }
 
 resource "azurerm_storage_account" "example_storage" {
-  name                     = "Anil12345"  # Make sure the name is unique
+  name                     = "anil12345"  # Make sure the name is unique
   resource_group_name      = azurerm_resource_group.example.name
   location                 = azurerm_resource_group.example.location
   account_tier              = "Standard"
   account_replication_type = "LRS"
 }
-
-resource "azurerm_linux_virtual_machine" "example_vm" {
-  name                = "example-vm"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  size                = "Standard_B1s"
-  admin_username      = "adminuser"
-  disable_password_authentication = true  # Disable password-based login
-
-  # Provide the public key for SSH
-  admin_ssh_key {
-    username   = "adminuser"
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAtH7IbTzXKb8VcD1dfMFuyh3B1Up7VsUz2RRsejdyj9xJQrgNktgWz3dlKh7XgZX8s41T0bd9/axddF0a5u0U6p7h0+MmpK4R/JMkmRY1y+H+qAV0NJzAy5CzBG9Xa4lQKkZsbqR95gLl+quL2TjG9ys6hlC1d+qlsUbSY9ds4Hqd2kK2dGlwdIjVGhoTn9RvhT6mcrDz64z+bWw8Fdptxtj7VgLknFz6aCN6UgXkMIw9bD1GqUpgF6VJhxEkQ0Hfl15Tq3hkaOdUKpxYgQlhRnzj8P0KZ5xA1tflqKnAz1h3r0Q=="
-
-  }
-
-  network_interface_ids = [
-    azurerm_network_interface.example_nic.id,
-  ]
-
-  # Image Source Reference
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "20.04-LTS"
-    version   = "latest"
-  }
-
-  # OS Disk Configuration
-  os_disk {
-    name                 = "example-os-disk"
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-}
-
 
 # Network Interface for the VM
 resource "azurerm_network_interface" "example_nic" {
