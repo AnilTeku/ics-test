@@ -12,7 +12,7 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "test_rg" {
+resource "azurerm_resource_group" "test_rg1" {
   name     = "TestResourceGroup"
   location = "East US"
 }
