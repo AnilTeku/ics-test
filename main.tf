@@ -16,13 +16,13 @@ provider "azurerm" {
   tenant_id       = "afa32410-c43f-47dd-be3a-654fe6e46b88"
 }
 
-# Create a Resource Group
+# Create Resource Group
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
   location = "East US"
 }
 
-# Create a Virtual Network
+# Create Virtual Network
 resource "azurerm_virtual_network" "example_vnet" {
   name                = "example-vnet"
   location            = azurerm_resource_group.example.location
@@ -30,16 +30,7 @@ resource "azurerm_virtual_network" "example_vnet" {
   address_space       = ["10.0.0.0/16"]
 }
 
-# Create a Storage Account
-resource "azurerm_storage_account" "example_storage" {
-  name                     = "examplestorageaccount"
-  resource_group_name      = azurerm_resource_group.example.name
-  location                 = azurerm_resource_group.example.location
-  account_tier              = "Standard"
-  account_replication_type = "LRS"
-}
-
-# Create a Subnet for Virtual Machine
+# Create Subnet within the Virtual Network
 resource "azurerm_subnet" "example_subnet" {
   name                 = "example-subnet"
   resource_group_name  = azurerm_resource_group.example.name
@@ -47,20 +38,16 @@ resource "azurerm_subnet" "example_subnet" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-# Create Network Interface
-resource "azurerm_network_interface" "example_nic" {
-  name                = "example-nic"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-
-  ip_configuration {
-    name                          = "example-ip-config"
-    subnet_id                    = azurerm_subnet.example_subnet.id
-    private_ip_address_allocation = "Dynamic"
-  }
+# Create Storage Account
+resource "azurerm_storage_account" "example_storage" {
+  name                     = "examplestorageacct"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier              = "Standard"
+  account_replication_type = "LRS"
 }
 
-# Create a Virtual Machine
+# Create Linux Virtual Machine
 resource "azurerm_linux_virtual_machine" "example_vm" {
   name                = "example-vm"
   resource_group_name = azurerm_resource_group.example.name
@@ -71,11 +58,49 @@ resource "azurerm_linux_virtual_machine" "example_vm" {
   network_interface_ids = [
     azurerm_network_interface.example_nic.id,
   ]
+
+  # Image Source Reference (Ubuntu 20.04 LTS)
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "20.04-LTS"
+    version   = "latest"
+  }
+
+  # OS Disk Configuration
   os_disk {
-    caching              = "ReadWrite"
+    name              = "example-os-disk"
+    caching           = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
-  tags = {
-    environment = "testing"
+}
+
+# Network Interface for the VM
+resource "azurerm_network_interface" "example_nic" {
+  name                = "example-nic"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.example_subnet.id
+    private_ip_address_allocation = "Dynamic"
   }
+}
+
+# Output to show created resources
+output "resource_group_name" {
+  value = azurerm_resource_group.example.name
+}
+
+output "virtual_network_name" {
+  value = azurerm_virtual_network.example_vnet.name
+}
+
+output "storage_account_name" {
+  value = azurerm_storage_account.example_storage.name
+}
+
+output "vm_name" {
+  value = azurerm_linux_virtual_machine.example_vm.name
 }
