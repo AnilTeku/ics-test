@@ -72,6 +72,3 @@ output "storage_account_name" {
   value = azurerm_storage_account.example_storage.name
 }
 
-output "vm_name" {
-  value = azurerm_linux_virtual_machine.example_vm.name
-}
