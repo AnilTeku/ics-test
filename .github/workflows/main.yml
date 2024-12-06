@@ -43,5 +43,5 @@ jobs:
         run: terraform plan -out=tfplan
 
       # Optional Step 7: Terraform Apply
-      # - name: Terraform Apply
-      #   run: terraform apply -auto-approve tfplan
+       - name: Terraform Apply
+         run: terraform apply -auto-approve tfplan
