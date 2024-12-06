@@ -1,0 +1,41 @@
+name: Terraform Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Terraform CI
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7 # Specify the desired Terraform version
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      # Step 3: Validate Terraform configuration
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Step 4: Plan Terraform deployment
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      # Optional Step 5: Apply Terraform plan (uncomment if needed for automated deploys)
+      # - name: Terraform Apply
+      #   run: terraform apply -auto-approve tfplan
